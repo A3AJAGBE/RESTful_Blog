@@ -1,11 +1,19 @@
+import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
 from datetime import datetime
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired, URL
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Get the year
 current_year = datetime.now().year
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # Database Configs
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
@@ -28,6 +36,16 @@ class Posts(db.Model):
 
 
 db.create_all()
+
+
+# Post Form
+class PostForm(FlaskForm):
+    title = StringField("Post Title", validators=[DataRequired()])
+    subtitle = StringField("Subtitle", validators=[DataRequired()])
+    author = StringField("Author Name", validators=[DataRequired()])
+    img_url = StringField("Image URL", validators=[DataRequired(), URL()])
+    body = StringField("Body", validators=[DataRequired()])
+    submit = SubmitField("Submit Post")
 
 
 @app.route('/')
