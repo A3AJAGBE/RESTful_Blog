@@ -57,7 +57,8 @@ class PostForm(FlaskForm):
 
 @app.route('/')
 def index():
-    return render_template('index.html', year=current_year)
+    all_posts = Posts.query.all()
+    return render_template('index.html', year=current_year, blogs=all_posts)
 
 
 @app.route('/new_post', methods=["GET", "POST"])
