@@ -61,6 +61,12 @@ def index():
     return render_template('index.html', year=current_year, blogs=all_posts)
 
 
+@app.route("/blog/<int:blog_id>")
+def blog(blog_id):
+    detail_blog = Posts.query.filter_by(id=blog_id).first()
+    return render_template('blog.html', year=current_year, blog=detail_blog)
+
+
 @app.route('/new_post', methods=["GET", "POST"])
 def new_post():
     form = PostForm()
