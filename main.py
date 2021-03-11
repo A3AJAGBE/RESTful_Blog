@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from datetime import datetime
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
+from flask_bootstrap import Bootstrap
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,6 +15,7 @@ current_year = datetime.now().year
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+Bootstrap(app)
 
 # Database Configs
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
