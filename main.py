@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template,redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired, URL
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import datetime
+import smtplib
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,6 +15,12 @@ load_dotenv()
 # Get the year
 current_year = datetime.now().year
 date = datetime.utcnow()
+
+
+# Email config
+EMAIL = os.environ.get('GMAIL')
+PASSWORD = os.environ.get('GMAIL_PASS')
+RECEIVER_EMAIL = os.environ.get('YMAIL')
 
 
 app = Flask(__name__)
@@ -119,9 +126,28 @@ def about():
     return render_template('about.html', year=current_year)
 
 
-@app.route('/contact')
+@app.route('/contact', methods=["GET", "POST"])
 def contact():
-    return render_template('contact.html', year=current_year)
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        phone = request.form['phone']
+        message = request.form['message']
+
+        message_info = f"The following information was submitted: \n" \
+                       f"Name: {name} \n" \
+                       f"Email: {email} \n" \
+                       f"Phone Number: {phone} \n" \
+                       f"Message: {message}"
+
+        with smtplib.SMTP("smtp.gmail.com") as conn:
+            conn.starttls()
+            conn.login(user=EMAIL, password=PASSWORD)
+            conn.sendmail(from_addr=EMAIL,
+                          to_addrs=RECEIVER_EMAIL,
+                          msg=f"Subject:New Blog Message!!!\n\n{message_info}")
+        return render_template('contact.html', year=current_year, sent=True, name=name)
+    return render_template('contact.html', year=current_year, sent=False)
 
 
 if __name__ == '__main__':
