@@ -6,15 +6,19 @@ from datetime import datetime
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_bootstrap import Bootstrap
+from flask_ckeditor import CKEditor, CKEditorField
 from dotenv import load_dotenv
 load_dotenv()
 
 
 # Get the year
 current_year = datetime.now().year
+date = datetime.utcnow()
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+ckeditor = CKEditor(app)
 Bootstrap(app)
 
 # Database Configs
@@ -46,13 +50,20 @@ class PostForm(FlaskForm):
     subtitle = StringField("Subtitle", validators=[DataRequired()])
     author = StringField("Author Name", validators=[DataRequired()])
     img_url = StringField("Image URL", validators=[DataRequired(), URL()])
-    body = StringField("Body", validators=[DataRequired()])
+    # Add ckeditor editor field
+    body = CKEditorField("Body", validators=[DataRequired()])
     submit = SubmitField("Submit Post")
 
 
 @app.route('/')
 def index():
     return render_template('index.html', year=current_year)
+
+
+@app.route('/new_post')
+def new_post():
+    form = PostForm()
+    return render_template('new_post.html', year=current_year, form=form)
 
 
 @app.route('/about')
