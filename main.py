@@ -17,5 +17,10 @@ def about():
     return render_template('about.html', year=current_year)
 
 
+@app.route('/contact')
+def contact():
+    return render_template('contact.html', year=current_year)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
