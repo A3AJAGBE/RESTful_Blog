@@ -61,7 +61,7 @@ def index():
     return render_template('index.html', year=current_year, blogs=all_posts)
 
 
-@app.route("/blog/<int:blog_id>")
+@app.route('/blog/<int:blog_id>')
 def blog(blog_id):
     detail_blog = Posts.query.filter_by(id=blog_id).first()
     return render_template('blog.html', year=current_year, blog=detail_blog)
@@ -83,6 +83,27 @@ def new_post():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('new_post.html', year=current_year, form=form)
+
+
+@app.route('/edit/<int:blog_id>', methods=["GET", "POST"])
+def edit(blog_id):
+    post = Posts.query.get(blog_id)
+    edit_form = PostForm(
+        title=post.title,
+        subtitle=post.subtitle,
+        img_url=post.img_url,
+        author=post.author,
+        body=post.body
+    )
+    if edit_form.validate_on_submit():
+        post.title = edit_form.title.data
+        post.subtitle = edit_form.subtitle.data
+        post.img_url = edit_form.img_url.data
+        post.author = edit_form.author.data
+        post.body = edit_form.body.data
+        db.session.commit()
+        return redirect(url_for("blog", blog_id=post.id))
+    return render_template('new_post.html', form=edit_form, is_edit=True, year=current_year)
 
 
 @app.route('/about')
