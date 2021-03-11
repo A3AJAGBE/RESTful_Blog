@@ -106,6 +106,14 @@ def edit(blog_id):
     return render_template('new_post.html', form=edit_form, is_edit=True, year=current_year)
 
 
+@app.route("/delete/<int:blog_id>")
+def delete(blog_id):
+    delete_post = Posts.query.get(blog_id)
+    db.session.delete(delete_post)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+
 @app.route('/about')
 def about():
     return render_template('about.html', year=current_year)
