@@ -32,7 +32,10 @@
           </a>
           <p class="post-meta">Posted by
             <a href="#">{{ blog.author }}</a>
-            on {{ blog.date }}</p>
+            on {{ blog.date }}
+           <a href="{{url_for('delete', blog_id=blog.id) }}">🗑</a>
+          </p>
+
         </div>
         <hr>
         {% endfor %}
