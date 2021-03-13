@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, validators
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor, CKEditorField
+from flask_login import UserMixin
 from datetime import datetime
 import smtplib
 from dotenv import load_dotenv
@@ -45,6 +46,15 @@ class Posts(db.Model):
 
     def __repr__(self):
         return f'Post Title: {self.title}'
+
+
+# Users Table
+
+class Users(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(1000), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(500), nullable=False)
 
 
 # db.create_all()
