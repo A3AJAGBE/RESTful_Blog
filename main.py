@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, SubmitField, PasswordField, validators
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor, CKEditorField
@@ -86,6 +86,13 @@ class RegisterForm(FlaskForm):
     email = StringField("Email Address", [validators.Email(message="That's not a valid email address.")])
     password = PasswordField("Password", [validators.Length(min=8, message="Password must be at least 8 characters.")])
     submit = SubmitField("Create")
+
+
+# login Form
+class LoginForm(FlaskForm):
+    email = StringField("Email Address", [validators.Email(message="That's not a valid email address.")])
+    password = PasswordField("Password", [validators.Length(min=8, message="Password must be at least 8 characters.")])
+    submit = SubmitField("Enter")
 
 
 @app.route('/')
@@ -202,6 +209,27 @@ def register():
             login_user(new_user)
             return redirect(url_for('index'))
     return render_template('register.html', year=current_year, form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = request.form['email']
+        password = request.form['password']
+
+        # Find the user by email
+        user = Users.query.filter_by(email=email).first()
+
+        if not user:
+            flash("Invalid email address, try again.")
+        elif not check_password_hash(user.password, password):
+            flash('Password incorrect, try again.')
+        else:
+            login_user(user)
+            return redirect(url_for('index'))
+
+    return render_template('login.html', year=current_year, form=form)
 
 
 @app.route('/logout')
