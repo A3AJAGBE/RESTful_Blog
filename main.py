@@ -207,6 +207,7 @@ def register():
 
             # Log in and authenticate user after adding details to database.
             login_user(new_user)
+            flash("Registered successfully, you're now logged in.")
             return redirect(url_for('index'))
     return render_template('register.html', year=current_year, form=form)
 
@@ -227,6 +228,7 @@ def login():
             flash('Password incorrect, try again.')
         else:
             login_user(user)
+            flash('Logged in Successfully')
             return redirect(url_for('index'))
 
     return render_template('login.html', year=current_year, form=form)
