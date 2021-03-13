@@ -119,7 +119,7 @@ class LoginForm(FlaskForm):
 
 # Comment Form
 class CommentForm(FlaskForm):
-    comment = CKEditorField("Comment", [validators.Email(message="The comment field can not be empty.")])
+    comment = CKEditorField("Comment", [validators.InputRequired(message="The comment cannot be empty.")])
     submit = SubmitField("Add Comment")
 
 
@@ -141,10 +141,22 @@ def index():
     return render_template('index.html', year=current_year, blogs=all_posts)
 
 
-@app.route('/blog/<int:blog_id>')
+@app.route('/blog/<int:blog_id>', methods=["GET", "POST"])
 def blog(blog_id):
     detail_blog = Posts.query.filter_by(id=blog_id).first()
     form = CommentForm()
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to comment.")
+            return redirect(url_for("login"))
+
+        new_comment = Comments(
+            comment=form.comment.data,
+            comment_author=current_user,
+            post=detail_blog
+        )
+        db.session.add(new_comment)
+        db.session.commit()
     return render_template('blog.html', year=current_year, blog=detail_blog, form=form)
 
 
