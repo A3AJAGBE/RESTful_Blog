@@ -2,8 +2,7 @@ import os
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, URL
+from wtforms import StringField, SubmitField, PasswordField, validators
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import datetime
@@ -53,13 +52,21 @@ class Posts(db.Model):
 
 # Post Form
 class PostForm(FlaskForm):
-    title = StringField("Post Title", validators=[DataRequired()])
-    subtitle = StringField("Subtitle", validators=[DataRequired()])
-    author = StringField("Author Name", validators=[DataRequired()])
-    img_url = StringField("Image URL", validators=[DataRequired(), URL()])
+    title = StringField("Post Title", [validators.InputRequired(message="The title field cannot be empty.")])
+    subtitle = StringField("Subtitle", [validators.InputRequired(message="The subtitle field cannot be empty.")])
+    author = StringField("Author Name", [validators.InputRequired(message="The author field cannot be empty.")])
+    img_url = StringField("Image URL", [validators.URL(message="That's not a valid url.")])
     # Add ckeditor editor field
-    body = CKEditorField("Body", validators=[DataRequired()])
+    body = CKEditorField("Body", [validators.InputRequired(message="The body cannot be empty.")])
     submit = SubmitField("Submit Post")
+
+
+# Register Form
+class RegisterForm(FlaskForm):
+    name = StringField("Name", [validators.InputRequired(message="The name field cannot be empty.")])
+    email = StringField("Email Address", [validators.Email(message="That's not a valid email address.")])
+    password = PasswordField("Password", [validators.Length(min=8, message="Password must be at least 8 characters.")])
+    submit = SubmitField("Create")
 
 
 @app.route('/')
