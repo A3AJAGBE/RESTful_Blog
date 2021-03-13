@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash
 from wtforms import StringField, SubmitField, PasswordField, validators
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor, CKEditorField
-from flask_login import UserMixin, login_user, LoginManager
+from flask_login import UserMixin, login_user, LoginManager, logout_user
 from datetime import datetime
 import smtplib
 from dotenv import load_dotenv
@@ -202,6 +202,12 @@ def register():
             login_user(new_user)
             return redirect(url_for('index'))
     return render_template('register.html', year=current_year, form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
