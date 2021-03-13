@@ -48,7 +48,7 @@ class Posts(db.Model):
         return f'Post Title: {self.title}'
 
 
-db.create_all()
+# db.create_all()
 
 
 # Post Form
@@ -95,22 +95,22 @@ def new_post():
 @app.route('/edit/<int:blog_id>', methods=["GET", "POST"])
 def edit(blog_id):
     post = Posts.query.get(blog_id)
-    edit_form = PostForm(
+    edit_post = PostForm(
         title=post.title,
         subtitle=post.subtitle,
         img_url=post.img_url,
         author=post.author,
         body=post.body
     )
-    if edit_form.validate_on_submit():
-        post.title = edit_form.title.data
-        post.subtitle = edit_form.subtitle.data
-        post.img_url = edit_form.img_url.data
-        post.author = edit_form.author.data
-        post.body = edit_form.body.data
+    if edit_post.validate_on_submit():
+        post.title = edit_post.title.data
+        post.subtitle = edit_post.subtitle.data
+        post.img_url = edit_post.img_url.data
+        post.author = edit_post.author.data
+        post.body = edit_post.body.data
         db.session.commit()
         return redirect(url_for("blog", blog_id=post.id))
-    return render_template('new_post.html', form=edit_form, is_edit=True, year=current_year)
+    return render_template('new_post.html', form=edit_post, is_edit=True, year=current_year)
 
 
 @app.route("/delete/<int:blog_id>")
