@@ -1,11 +1,12 @@
 import os
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
+from werkzeug.security import generate_password_hash
 from wtforms import StringField, SubmitField, PasswordField, validators
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor, CKEditorField
-from flask_login import UserMixin
+from flask_login import UserMixin, login_user, LoginManager
 from datetime import datetime
 import smtplib
 from dotenv import load_dotenv
@@ -32,6 +33,14 @@ Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(user_id)
 
 
 # Posts Table
@@ -165,6 +174,34 @@ def contact():
                           msg=f"Subject:New Blog Message!!!\n\n{message_info}")
         return render_template('contact.html', year=current_year, sent=True, name=name)
     return render_template('contact.html', year=current_year, sent=False)
+
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Make sure the email does not exist
+        if Users.query.filter_by(email=email).first():
+            flash("That email exists in the database, try again!!!")
+        else:
+            encrypt_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+
+            new_user = Users(
+                name=name,
+                email=email,
+                password=encrypt_password,
+            )
+            db.session.add(new_user)
+            db.session.commit()
+
+            # Log in and authenticate user after adding details to database.
+            login_user(new_user)
+            return redirect(url_for('index'))
+    return render_template('register.html', year=current_year, form=form)
 
 
 if __name__ == '__main__':
