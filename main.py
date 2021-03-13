@@ -53,9 +53,10 @@ class Users(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(500), nullable=False)
     posts = relationship("Posts", back_populates="author")
+    comments = relationship("Comments", back_populates="comment_author")
 
 
-# db.create_all()
+db.create_all()
 
 
 # Posts Table
@@ -69,9 +70,26 @@ class Posts(db.Model):
     img_url = db.Column(db.String(250), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     author = relationship("Users", back_populates="posts")
+    comments = relationship("Comments", back_populates="post")
 
 
-# db.create_all()
+db.create_all()
+
+
+# Comments Table
+class Comments(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.Text, nullable=False)
+    # One to many relationship with users
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    comment_author = relationship("Users", back_populates="comments")
+    # One to many relationship with posts
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
+    post = relationship("Posts", back_populates="comments")
+
+
+db.create_all()
 
 
 # Post Form
