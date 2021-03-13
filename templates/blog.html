@@ -54,8 +54,8 @@
                           </div>
                             {% for comment in blog.comments %}
                             <div class="d-flex">
-                                <div class="p-2"><img src="https://pbs.twimg.com/profile_images/744849215675838464/IH0FNIXk.jpg" class="rounded-circle" width="80" alt="{{comment.comment_author.name}} Image"></div>
-                                <div class="p-0">
+                                <div class="px-2"> <img src="{{ comment.comment_author.email | gravatar }}" class="rounded-circle" alt="{{comment.comment_author.name}} Image"> </div>
+                                <div>
                                     <h5 class="text-muted"> {{comment.comment_author.name}} </h5>
                                     {{comment.comment|safe}}
                                 </div>
