@@ -1,3 +1,5 @@
+
+{% import 'bootstrap/wtf.html' as wtf %}
 {% include "header.html" %}
 
   <!-- Page Header -->
@@ -37,9 +39,12 @@
         </div>
 
       </div>
+
+<!--        Comment Section-->
+        {{ ckeditor.load() }}
+        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
     </div>
   </article>
 
-  <hr>
 
 {% include "footer.html" %}
