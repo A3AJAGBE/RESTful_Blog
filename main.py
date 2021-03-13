@@ -99,6 +99,12 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Enter")
 
 
+# Comment Form
+class CommentForm(FlaskForm):
+    comment = CKEditorField("Comment", [validators.Email(message="The comment field can not be empty.")])
+    submit = SubmitField("Add Comment")
+
+
 # admin-only decorator
 def admin_only(f):
     @wraps(f)
@@ -120,7 +126,8 @@ def index():
 @app.route('/blog/<int:blog_id>')
 def blog(blog_id):
     detail_blog = Posts.query.filter_by(id=blog_id).first()
-    return render_template('blog.html', year=current_year, blog=detail_blog)
+    form = CommentForm()
+    return render_template('blog.html', year=current_year, blog=detail_blog, form=form)
 
 
 @app.route('/new_post', methods=["GET", "POST"])
