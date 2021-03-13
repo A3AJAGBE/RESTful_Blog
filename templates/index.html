@@ -43,17 +43,23 @@
           <p class="post-meta">Posted by
             <a href="#">{{ blog.author }}</a>
             on {{ blog.date }}
+            <!--         The user with the num 1 is admin, so restricting access to just admin-->
+             {% if current_user.id == 1 %}
            <a href="{{url_for('delete', blog_id=blog.id) }}">🗑</a>
+            {% endif %}
           </p>
 
         </div>
         <hr>
         {% endfor %}
 
+<!--         The user with the num 1 is admin, so restricting access to just admin-->
+         {% if current_user.id == 1 %}
         <!-- New Post -->
         <div class="clearfix">
           <a class="btn btn-primary float-right" href="{{ url_for('new_post') }}">Create New Post</a>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>

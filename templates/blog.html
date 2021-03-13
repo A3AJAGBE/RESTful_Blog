@@ -29,7 +29,10 @@
 
       <div class="clearfix">
          <a class="btn btn-primary float-left" href="{{ url_for('index') }}"> &larr; Back</a>
+          <!--         The user with the num 1 is admin, so restricting access to just admin-->
+         {% if current_user.id == 1 %}
         <a class="btn btn-primary float-right" href="{{url_for('edit', blog_id=blog.id)}}">Edit Post ✍</a>
+          {% endif %}
       </div>
         </div>
 
