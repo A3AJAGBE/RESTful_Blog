@@ -9,6 +9,7 @@ from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor, CKEditorField
 from flask_login import UserMixin, login_user, LoginManager, logout_user, current_user
 from functools import wraps
+from flask_gravatar import Gravatar
 from datetime import datetime
 import smtplib
 from dotenv import load_dotenv
@@ -43,6 +44,16 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(user_id)
+
+
+gravatar = Gravatar(app,
+                    size=100,
+                    rating='g',
+                    default='retro',
+                    force_default=False,
+                    force_lower=False,
+                    use_ssl=False,
+                    base_url=None)
 
 
 # Users Table
