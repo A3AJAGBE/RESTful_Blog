@@ -41,7 +41,7 @@
             </h3>
           </a>
           <p class="post-meta">Posted by
-            <a href="#">{{ blog.author }}</a>
+            <a href="#">{{blog.author.name}}</a>
             on {{ blog.date }}
             <!--         The user with the num 1 is admin, so restricting access to just admin-->
              {% if current_user.id == 1 %}
